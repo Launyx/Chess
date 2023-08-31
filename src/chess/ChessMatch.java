@@ -33,7 +33,7 @@ public class ChessMatch {
 
         Piece capturedPiece = makeMove(source, target); // calls a method to move a piece and stores a possible captured piece in the given target position
 
-        return (ChessPiece)capturedPiece;   // return the captured piece with downcast
+        return (ChessPiece)capturedPiece;   // returns the captured piece with downcast
     
     }
 
