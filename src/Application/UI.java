@@ -3,6 +3,7 @@ package Application;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import chess.Color;
@@ -57,7 +58,13 @@ public class UI {
             }
             System.out.println();   // breaks the line
         }
-        System.out.print("  a b c d e f g h");  // prints the bottom edge of the board
+        System.out.println("  a b c d e f g h");  // prints the bottom edge of the board
+    }
+
+    public static void printMatch(ChessMatch chessMatch){
+        printBoard(chessMatch.getPieces()); // Prints the board with the pieces of the chess match
+        System.out.println("\nTurn: " + chessMatch.getTurn());  // Print the turn the match is in
+        System.out.println("Waiting player: " + chessMatch.getCurrentPlayer()); // Print the player that is supposed make a move
     }
 
     public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves){   // Method that shows the board on the terminal
@@ -68,7 +75,7 @@ public class UI {
             }
             System.out.println();   // breaks the line
         }
-        System.out.print("  a b c d e f g h");  // prints the bottom edge of the board
+        System.out.println("  a b c d e f g h");  // prints the bottom edge of the board
     }
     
     private static void printPiece(ChessPiece piece, boolean background) {

@@ -8,10 +8,14 @@ import chess.pieces.Rook;
 
 public class ChessMatch {
     
+    private int turn;
+    private Color currentPlayer;
     private Board board;
 
     public ChessMatch(){
         board = new Board(8, 8);
+        turn = 1;
+        currentPlayer = Color.WHITE;
         initialSetup();
     }
 
@@ -23,6 +27,14 @@ public class ChessMatch {
             }
         }
         return mat;
+    }
+
+    public int getTurn(){
+        return turn;
+    }
+
+    public Color getCurrentPlayer(){
+        return currentPlayer;
     }
 
     public boolean[][] possibleMoves(ChessPosition sourcePosition){
@@ -38,7 +50,7 @@ public class ChessMatch {
         validateSourcePosition(source); // Calls a method to check there is a piece in the given source position
         validadeTargetPosition(source, target);
         Piece capturedPiece = makeMove(source, target); // calls a method to move a piece and stores a possible captured piece in the given target position
-
+        nextTurn();
         return (ChessPiece)capturedPiece;   // returns the captured piece with downcast
     
     }
@@ -54,16 +66,23 @@ public class ChessMatch {
         if (!board.thereIsAPiece(position)){    // checks if there is a piece on the position
             throw new ChessException("There is no piece on source position");
         }
+        if (currentPlayer != ((ChessPiece)board.piece(position)).getColor()){ // if the color of the currentPlayer is different from the color of the piece in the source position
+            throw new ChessException("The chosen piece is not yours");
+        }    
         if (!board.piece(position).isThereAnyPossibleMove()){
             throw new ChessException("There is no possible moves for the chosen piece");
-        }
-        
+        }  
     }
 
     private void validadeTargetPosition(Position source, Position target){  // Method to check if the piece can move to the target position
         if (!board.piece(source).possibleMove(target)){ // Verify if the piece in the source position can move to the target position
             throw new ChessException("The chosen piece can't move to target position");
         }
+    }
+
+    private void nextTurn(){
+        turn++;
+        currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE; // if the currentPlayer is white, the next turn the player is black, if not, the next turn the player is white
     }
 
     private void placeNewPiece(char column, int row, ChessPiece piece){

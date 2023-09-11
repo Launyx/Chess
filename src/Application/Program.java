@@ -19,7 +19,7 @@ public class Program {
             try{
 
                 UI.clearScreen();
-                UI.printBoard(chessmatch.getPieces());
+                UI.printMatch(chessmatch);
                 System.out.println();
                 System.out.print("Source: ");
                 ChessPosition source = UI.readChessPosition(tec);   // Call a method that read the chessposition given by the user and stores as a source position
