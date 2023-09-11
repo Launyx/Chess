@@ -53,16 +53,31 @@ public class UI {
         for(int i = 0; i < pieces.length; i++){
             System.out.print((8 - i ) + " ") ;  // prints the side edge of the board
             for(int j = 0; j < pieces.length; j++){
-                printPiece(pieces[i][j]);   // Call the method that prints the pieces in the UI based on the matrix of the board
+                printPiece(pieces[i][j], false);   // Call the method that prints the pieces in the UI based on the matrix of the board
             }
             System.out.println();   // breaks the line
         }
         System.out.print("  a b c d e f g h");  // prints the bottom edge of the board
     }
 
-    private static void printPiece(ChessPiece piece) {
+    public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves){   // Method that shows the board on the terminal
+        for(int i = 0; i < pieces.length; i++){
+            System.out.print((8 - i ) + " ") ;  // prints the side edge of the board
+            for(int j = 0; j < pieces.length; j++){
+                printPiece(pieces[i][j], possibleMoves[i][j]);   // Call the method that prints the pieces in the UI based on the matrix of the board
+            }
+            System.out.println();   // breaks the line
+        }
+        System.out.print("  a b c d e f g h");  // prints the bottom edge of the board
+    }
+    
+    private static void printPiece(ChessPiece piece, boolean background) {
+        if (background){
+            System.out.print(ANSI_BLUE_BACKGROUND);
+        }
+
     	if (piece == null) {    // Checks which piece is the given one
-            System.out.print("-");  // if the position in the board's matrix is null, this line is shown
+            System.out.print("-" + ANSI_RESET);  // if the position in the board's matrix is null, this line is shown
         }
         else {
             if (piece.getColor() == Color.WHITE) {  // checks the color of the piece
