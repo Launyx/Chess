@@ -71,6 +71,10 @@ public class UI {
         printCapturedPieces(captured);
         System.out.println("\nTurn: " + chessMatch.getTurn());  // Print the turn the match is in
         System.out.println("Waiting player: " + chessMatch.getCurrentPlayer()); // Print the player that is supposed make a move
+
+        if (chessMatch.getCheck()){
+            System.out.println("CHECK!");
+        }
     }
 
     public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves){   // Method that shows the board on the terminal

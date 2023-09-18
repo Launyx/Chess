@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import boardgame.Board;
 import boardgame.Piece;
@@ -14,6 +15,7 @@ public class ChessMatch {
     private int turn;
     private Color currentPlayer;
     private Board board;
+    private boolean check;
 
     private List<Piece> piecesOnTheBoard = new ArrayList<>();
     private List<Piece> capturedPieces = new ArrayList<>();
@@ -43,6 +45,10 @@ public class ChessMatch {
         return currentPlayer;
     }
 
+    public boolean getCheck(){
+        return check;
+    }
+
     public boolean[][] possibleMoves(ChessPosition sourcePosition){
         Position position = sourcePosition.toPosition();
         validateSourcePosition(position);
@@ -56,9 +62,18 @@ public class ChessMatch {
         validateSourcePosition(source); // Calls a method to check there is a piece in the given source position
         validadeTargetPosition(source, target);
         Piece capturedPiece = makeMove(source, target); // calls a method to move a piece and stores a possible captured piece in the given target position
+        
+
+        if (testCheck(currentPlayer)){  // Calls the method to verify if the currentplayer's king is in check
+            undoMove(source, target, capturedPiece);    // if the king is in check, calls the undoMove
+            throw new ChessException("You can't put yourself in check");    // and throws an exception
+        }
+
+        check = (testCheck(opponent(currentPlayer))) ? true: false;
+        
+
         nextTurn();
         return (ChessPiece)capturedPiece;   // returns the captured piece with downcast
-    
     }
 
     private Piece makeMove(Position source, Position target){   // Method that moves the pieces
@@ -72,6 +87,17 @@ public class ChessMatch {
         }
         
         return capturedPiece;   // return the possible captured piece
+    }
+
+    private void undoMove(Position source, Position target, Piece capturedPiece){
+        Piece p = board.removePiece(target);    // Removes the piece in the target position and stores it in a variable
+        board.placePiece(p, source);    // Return the piece to the source position
+
+        if (capturedPiece != null){
+            board.placePiece(capturedPiece, target);    // Place the piece
+            capturedPieces.remove(capturedPiece);
+            piecesOnTheBoard.add(capturedPiece);
+        }
     }
 
     private void validateSourcePosition(Position position){     // Method to check if the source position
@@ -95,6 +121,34 @@ public class ChessMatch {
     private void nextTurn(){
         turn++;
         currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE; // if the currentPlayer is white, the next turn the player is black, if not, the next turn the player is white
+    }
+
+    private Color opponent(Color color){
+        return (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
+    }
+
+    private ChessPiece king(Color color){
+        List<Piece> list = piecesOnTheBoard.stream().filter(x ->((ChessPiece)x).getColor() == color).collect(Collectors.toList());  // Filter the list of pieces on the board
+    
+        for (Piece p: list){
+            if(p instanceof King){
+                return (ChessPiece)p;
+            }
+        }
+        throw new IllegalStateException("There is no " + color + " king on the board");
+    }
+
+    private boolean testCheck(Color color){
+        Position kingPosition = king(color).getChessPosition().toPosition();    // Get the king's position of the given color
+        List<Piece> opponentPieces = piecesOnTheBoard.stream().filter(x ->((ChessPiece)x).getColor() == opponent(color)).collect(Collectors.toList());  // Get the list of opponent's pieces
+    
+        for (Piece p: opponentPieces){
+            boolean[][] mat = p.possibleMoves();    // gets all the possible moves of the opponent's pieces
+            if (mat[kingPosition.getRow()][kingPosition.getColumn()]){     // verify the matrix if its has the position of the king
+                return true;
+            }  
+        }
+        return false;
     }
 
     private void placeNewPiece(char column, int row, ChessPiece piece){
