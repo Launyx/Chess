@@ -7,6 +7,7 @@ import boardgame.Position;
 public abstract class ChessPiece extends Piece{ // this class became bastract because it extends Piece but is too generic to implement the possibleMoves() method
 
     private Color color;
+    private int moveCount;
 
     public ChessPiece(Board board, Color color) {
         super(board);
@@ -14,7 +15,19 @@ public abstract class ChessPiece extends Piece{ // this class became bastract be
     }
 
     public Color getColor() {
-        return color;
+        return this.color;
+    }
+
+    public int getMoveCount(){
+        return this.moveCount;
+    }
+
+    public void increaseMoveCount(){
+        this.moveCount ++;
+    }
+
+    public void decreaseMoveCount(){
+        this.moveCount --;
     }
 
     public ChessPosition getChessPosition(){
